@@ -2,11 +2,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TextComposer extends StatefulWidget {
+
+  TextComposer(this.sendMessage);
+  Function(String) sendMessage;
+
   @override
   _TextComposerState createState() => _TextComposerState();
 }
 
 class _TextComposerState extends State<TextComposer> {
+
+  void _reset(){
+    _controller.clear();
+    setState(() {
+      _isComponsing = false;
+    });
+  }
+
+  TextEditingController _controller = TextEditingController();
   bool _isComponsing = false;
 
   @override
@@ -21,6 +34,7 @@ class _TextComposerState extends State<TextComposer> {
             ),
             Expanded(
               child: TextField(
+                controller: _controller,
                 decoration: InputDecoration.collapsed(hintText: "Envie uma mensagem"),
                 onChanged: (text){
                   setState(() {
@@ -28,14 +42,16 @@ class _TextComposerState extends State<TextComposer> {
                   });
                 },
                 onSubmitted: (text){
-
+                    widget.sendMessage(text);
+                    _reset();
                 },
               ),
             ),
             IconButton(
                 icon: Icon(Icons.send),
                 onPressed: _isComponsing ? (){
-
+                  widget.sendMessage(_controller.text);
+                  _reset();
                 } : null
             )
           ],
